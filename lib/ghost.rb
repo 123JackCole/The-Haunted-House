@@ -69,7 +69,7 @@ class Ghost < ActiveRecord::Base
         end
     end
 
-    def self.banish
+    def banish
         puts "\nAs you chant the strange words the entire house begins to".red
         puts "shake. What begins as a soft murmur transforms to an ear piercing".red
         puts "shriek. Bael appears before you. His body rapidly morphs from".red

@@ -6,36 +6,36 @@ class CommandLineInterface
         while true
             puts "\nType 'help' to see the list of available commands. Type 'quit' to exit.".magenta
             print "Enter command: ".cyan
-            input = gets.chomp.upcase.titleize
+            input = gets.chomp.downcase
 
-            break if input == "Quit"
+            break if input == "quit"
 
             if input.include?("move to ")
                 room = input.split("move to ")
                 Resident.move_to(room[1])
             else
                 case input
-                when "Help"
+                when "help"
                     help
-                when "List Rooms"
+                when "list rooms"
                     Location.list_rooms
-                when "List Family"
+                when "list family"
                     Resident.list_family
-                when "Where Am I"
+                when "where am i"
                     Resident.where_am_i
-                when "Check Sanity"
+                when "check sanity"
                     Resident.sanity
-                when "Search"
+                when "search"
                     Resident.search
-                when "Name Reminder"
+                when "name reminder"
                     if Resident.miranda.knowledge
                         (Ghost.find_by name: "Bael").name_reminder
                     else
                         puts "\n  Invalid command, type 'help' to see a list of available commands"
                     end
-                when "Banish Bael"
+                when "banish bael"
                     if Resident.miranda.knowledge && Resident.miranda.book
-                        Ghost.banish
+                        Ghost.find_by(name: "Bael").banish
                     else
                         puts "\n  Invalid command, type 'help' to see a list of available commands"
                     end
@@ -98,7 +98,7 @@ class CommandLineInterface
         puts "  move to ____\t\t\t:attemps to move Miranda to a room".green
         puts "  search\t\t\t:searches the room for anything useful".green
         if Resident.miranda.knowledge == true
-            puts "  name reminder\t\t\t\t:tells you the spirit's name".green
+            puts "  name reminder\t\t\t:tells you the spirit's name".green
         end
         if Resident.miranda.knowledge && Resident.miranda.book == true
             puts "  banish bael\t\t\t:banishes bael!".green
