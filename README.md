@@ -10,7 +10,8 @@ The Haunted House is a text based game about an innocent family being tormented 
 1. Clone the repository
 2. Navigate your terminal directory inside of the cloned repo
 3. Run bundle install
-4. Type "rake start_game" to begin
+4. Run rake db:migrate
+5. Run rake start_game to begin
 
 ---
 
