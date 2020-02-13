@@ -20,6 +20,8 @@ The Haunted House is a text based game about an innocent family being tormented 
 
 This is the main command that you will be using. Help pulls up a menu that shows you all commands you can use. If you're ever confused or stuck, type help to see your options. Let's go through them together
 
+![Help](screenshots/help.png)
+
 #### List rooms
 
 Lists the rooms in the house. A useful command if you forgot the names of the rooms and are trying to move to a different room
@@ -57,9 +59,13 @@ ActiveRecord
 
 I used a cool gem called [colorize](https://github.com/fazibear/colorize)
 
+---
+
 ## Author
 
 Jack Cole - [GitHub](https://github.com/123JackCole)
+
+---
 
 ## License
 
