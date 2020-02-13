@@ -18,31 +18,31 @@ The Haunted House is a text based game about an innocent family being tormented 
 
 #### Help
 
-This is the main command that you will be using. Help pulls up a menu that shows you all commands you can use. If you're ever confused or stuck, type help to see your options. Let's go through them together.
+This is the main command that you will be using. Help pulls up a menu that shows you all commands you can use. If you're ever confused or stuck, type help to see your options. Let's go through them together
 
 #### List rooms
 
-Lists the rooms in the house. A useful command if you forgot the names of the rooms and are trying to move to a different room.
+Lists the rooms in the house. A useful command if you forgot the names of the rooms and are trying to move to a different room
 
 #### List family
 
-Lists the members of your family that are currently alive. The less family members that are alive the stronger the spirits will be!
+Lists the members of your family that are currently alive. The less family members that are alive the stronger the spirits will be
 
 #### Where am I
 
-Tells you which room you're in.
+Tells you which room you're in
 
 #### Check sanity
 
-Tells you your current sanity. Sanity is an important mechanic in this game. All family members have sanity. Whenever a family member encounters a spirit they are attacked and their sanity decreases. If a family member's sanity reaches zero, they die and become a spirit themselves. If your sanity reaches zero, you lose. There are also opportunities to gain back sanity that you'll encounter along the way.
+Tells you your current sanity. Sanity is an important mechanic in this game. All family members have sanity. Whenever a family member encounters a spirit they are attacked and their sanity decreases. If a family member's sanity reaches zero, they die and become a spirit themselves. If your sanity reaches zero, you lose. There are also opportunities to gain back sanity that you'll encounter along the way
 
 #### Move to ____
 
-Attepts to move you to a room. Whenever you successfully move to a room all other family members and spirits move as well, so try to move as efficiently as possible!
+Attempts to move you to a room. For example, type "move to living room". Whenever you successfully move to a room all other family members and spirits move as well, so try to move as efficiently as possible
 
 #### Search
 
-Searches your current room for anything important. You need to search rooms to unlock the haunted house's secrets.
+Searches your current room for anything important. You need to search rooms to unlock the haunted house's secrets
 
 ---
 
