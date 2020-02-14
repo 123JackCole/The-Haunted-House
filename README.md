@@ -3,6 +3,8 @@ The Haunted House
 
 The Haunted House is a text based game about an innocent family being tormented by a spirit named Bael.
 
+[Here's a summary video I made for it.](https://youtu.be/m3HeToVCy8I)
+
 ---
 
 ## Installation
