@@ -4,30 +4,22 @@ class Resident < ActiveRecord::Base
     belongs_to :locations
 
     def self.list_family
-        Resident.all.each_with_index do |resident, index|
+        self.all.each_with_index do |resident, index|
             puts (index + 1).to_s.bold + ".\t#{resident.name}".red
         end
     end
 
-    # helper method that gives the resident instance for miranda
-    def self.miranda
-        Resident.find_by(name: "Miranda")
-    end
-
-    # helper method that gives miranda's location_id
-    def self.miranda_location
-        Resident.miranda.location_id
-    end
-
     def self.where_am_i
-        location = Location.find(Resident.miranda_location).name
+        location = self.miranda_location.name
         puts "\nYou are currently in the #{location}".red
     end
 
     def self.sanity
-        sanity = Resident.miranda.sanity
+        sanity = self.miranda.sanity
         puts "\nYour sanity is currently #{sanity}".red
-        if sanity > 3 
+        if sanity > 10 
+            puts "\nYou're in a state of bliss. Have you done this before?".red
+        elsif sanity < 10 && sanity > 3
             puts "\nYou're feeling great!".red
         elsif sanity == 3 
             puts "\nYou're calm and collected.".red
@@ -39,37 +31,36 @@ class Resident < ActiveRecord::Base
         end
     end
 
-    def self.residents_in_room(location)
-        residents_in_room = Resident.where(location_id: location)
+    # helper method that returns the resident instance for miranda
+    def self.miranda
+        self.find_by(name: "Miranda")
     end
 
-    def residents_in_room_no_miranda(location)
-        residents_in_room = Resident.where(location_id: location)
-        residents_in_room = residents_in_room.where("name != 'Miranda'")
-    end
-
-    def ghosts_in_room(location)
-        ghosts_in_room = Ghost.where(location_id: location)
+    # helper method that returns the location instance for miranda
+    def self.miranda_location
+        Location.find(self.miranda.location_id)
     end
 
     def self.move_all_residents
-        Resident.all.map do |resident| 
-            resident.update(location_id: rand(Location.all[0].id..Location.all[4].id))
+        self.all.map do |resident|
+            if resident.name != "Miranda"
+                resident.update(location_id: rand(Location.all[0].id..Location.all[4].id))
+            end
         end        
     end
 
     def self.check_miranda_current_room
-        if Resident.miranda.residents_in_room_no_miranda(Resident.miranda_location).count > 0
-            Resident.miranda.residents_in_room_no_miranda(Resident.miranda_location).map do |resident|
+        if self.miranda_location.residents_no_miranda.count > 0
+            self.miranda_location.residents_no_miranda.map do |resident|
                 sleep(3)
                 puts "\n#{resident.name} walks into the room. You try to approach each".red
                 puts "other but a mysterious force doesn't let you touch. However, a".red
                 puts "friendly face is a much needed respite during these trying times.".red
                 puts "It appears that you need to do this alone.".red
                 sleep(2)
-                unless Resident.miranda.ghosts_in_room(Resident.miranda_location).count > 0
-                    Resident.increment_counter(:sanity, Resident.miranda.id)
-                    Resident.increment_counter(:sanity, resident.id)
+                unless self.miranda_location.ghosts.count > 0
+                    self.increment_counter(:sanity, self.miranda.id)
+                    self.increment_counter(:sanity, resident.id)
                     puts "\nYou and #{resident.name} gain 1 sanity.".red
                 end
             end
@@ -78,13 +69,10 @@ class Resident < ActiveRecord::Base
 
     def self.move_to(room)
         room = room.titleize
-
-        if Location.find(Resident.miranda_location).name == room
-
+        if Location.find(self.miranda_location.id).name == room
             puts "\nYou're already in the #{room}. You don't have time for this!".red
-            puts "type 'help' to see a list of available commands"
 
-        elsif Location.all.any? {|location| room == location.name} && Location.find(Resident.miranda_location).name != room
+        elsif Location.all.any? {|location| room == location.name} && self.miranda_location.name != room
 
             if room == "Attic" && Location.find_by(name: room).unlocked == false
                 puts "\nYou need to find the entrance to the attic first!".red
@@ -101,14 +89,9 @@ class Resident < ActiveRecord::Base
                 puts "\nYou're now in the #{room}".red
                 puts "However, on your way you heard other footsteps.".red
 
-                Resident.move_all_residents
-                Ghost.move_all_ghosts
-                
-                new_location = Location.find_by(name: room).id
-                Resident.miranda.update(location_id: new_location)
-
-                Resident.check_miranda_current_room
-                Ghost.ghosts_attack
+                Location.find_by(name: room).move_miranda
+                Location.update_locations
+                Spook.interaction
                 return
             end
 
@@ -127,28 +110,19 @@ class Resident < ActiveRecord::Base
                 puts "\nYou're now in the #{room}".red
                 puts "However, on your way you heard other footsteps.".red
 
-                Resident.move_all_residents
-                Ghost.move_all_ghosts
-
-                new_location = Location.find_by(name: room).id
-                Resident.miranda.update(location_id: new_location)
-
-                Resident.check_miranda_current_room
-                Ghost.ghosts_attack
+                Location.find_by(name: room).move_miranda
+                Location.update_locations
+                Spook.interaction
                 return
             end
 
-            Resident.move_all_residents
-            Ghost.move_all_ghosts
-
-            new_location = Location.find_by(name: room).id
-            Resident.miranda.update(location_id: new_location)
+            Location.find_by(name: room).move_miranda
+            Location.update_locations
 
             puts "\nYou're now in the #{room}".red
             puts "However, on your way you heard other footsteps.".red
 
-            Resident.check_miranda_current_room
-            Ghost.ghosts_attack
+            Spook.interaction
 
         else
             puts "\nThat isn't a valid room! You don't have time for this!".red
@@ -157,8 +131,8 @@ class Resident < ActiveRecord::Base
     end
 
     def self.search
-        location = Location.find(Resident.miranda_location).name
-        case location
+        room = self.miranda_location.name
+        case room
         when "Master Bedroom"
             puts "\nA king sized bed with fresh linnens. A wooden dresser, a bedside ".red
             print "table, a lamp, A STRANGE WOMA".red
@@ -182,13 +156,10 @@ class Resident < ActiveRecord::Base
             puts "\nWhile working you heard footsteps.".red
             sleep(2)
 
-            location = Resident.miranda_location
+            self.increment_counter(:sanity, self.miranda.id)
+            Location.update_locations
+            Spook.interaction
 
-            Resident.move_all_residents
-            Resident.miranda.update(location_id: location)
-            Ghost.move_all_ghosts
-            Resident.check_miranda_current_room
-            Ghost.ghosts_attack
         when "Bathroom"
             puts "\nYou pull back the shower curtain in one swift motion.".red
             puts "There's nothing. You exhale and collect your thoughts.".red
@@ -213,17 +184,14 @@ class Resident < ActiveRecord::Base
             puts "\nWhile working you heard footsteps.".red
             sleep(2)
 
-            location = Resident.miranda_location
+            self.increment_counter(:sanity, self.miranda.id)
+            Location.update_locations
+            Spook.interaction
 
-            Resident.move_all_residents
-            Resident.miranda.update(location_id: location)
-            Ghost.move_all_ghosts
-            Resident.check_miranda_current_room
-            Ghost.ghosts_attack
         when "Attic"
-            if Resident.miranda.knowledge == false
-                Resident.miranda.update(knowledge: true)
-                Resident.increment_counter(:sanity, Resident.miranda.id)
+            if self.miranda.knowledge == false
+                self.miranda.update(knowledge: true)
+                self.increment_counter(:sanity, self.miranda.id)
             end
 
             puts "\nThe air is thick with dust and decay. As you look around the attic".red
@@ -235,9 +203,9 @@ class Resident < ActiveRecord::Base
             sleep(2)
             puts "\nNow you know it's name. You're getting closer.".red
         when "Basement"
-            if Resident.miranda.book == false
-                Resident.miranda.update(book: true)
-                Resident.increment_counter(:sanity, Resident.miranda.id)
+            if self.miranda.book == false
+                self.miranda.update(book: true)
+                self.increment_counter(:sanity, self.miranda.id)
             end
 
             puts "\nAfter making your way down the creaky wooden stairs".red
@@ -254,7 +222,7 @@ class Resident < ActiveRecord::Base
         end
     end
 
-    def self.dead
+    def dead
         puts "\nYou collapse on the floor, still awake but unable to move. What once was".red
         puts "your family stands above you motionless. You hear a cackling laughter as".red
         puts "your vision fades.".red
@@ -263,4 +231,5 @@ class Resident < ActiveRecord::Base
         sleep(1)
         exit
     end
+
 end
