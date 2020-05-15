@@ -53,7 +53,7 @@ Searches your current room for anything important. You need to search rooms to u
 
 ## Technology Used
 
-Ruby
+Ruby, 
 ActiveRecord
 
 ---
